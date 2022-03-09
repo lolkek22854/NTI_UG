@@ -27,6 +27,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
+    db_session.global_init("db/data.sqlite")
     if not current_user.is_authenticated:
         return redirect('/non_authorization')
     session = db_session.create_session()
@@ -138,13 +139,9 @@ def not_found(error):
     return render_template('404.html')
 
 
-def main(*args):
+def main():
     db_session.global_init("db/data.sqlite")
-    print(args)
-    print(len(args))
-    print(*args)
-    app.run(host='0.0.0.0', port=args[0]['SERVER_PORT'])
-
+    app.run()
 
 
 if __name__ == '__main__':
