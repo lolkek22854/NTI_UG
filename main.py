@@ -143,7 +143,8 @@ def main(*args):
     print(args)
     print(len(args))
     print(*args)
-    app.run()
+    app.run(host=args[0]['HTTP_HOST'], port=args[0]['SERVER_PORT'])
+
 
 
 if __name__ == '__main__':
