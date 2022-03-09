@@ -141,7 +141,7 @@ def not_found(error):
 def main(*args):
     db_session.global_init("db/data.sqlite")
     print(args)
-    app.run(args)
+    app.run()
 
 
 if __name__ == '__main__':
