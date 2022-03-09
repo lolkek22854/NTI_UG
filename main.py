@@ -18,6 +18,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+@app.before_first_request()
+def create_db():
+    db_session.global_init('db/data.sqlite')
+
+
 @login_manager.user_loader
 def load_user(user_id):
     db_session.global_init('db/data.sqlite')
@@ -27,7 +32,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    db_session.global_init("db/data.sqlite")
+    # db_session.global_init("db/data.sqlite")
     if not current_user.is_authenticated:
         return redirect('/non_authorization')
     session = db_session.create_session()
@@ -108,6 +113,7 @@ def logout():
 
 @app.route('/send_data', methods=['GET', 'POST'])
 def send_data():
+    print(request)
     print(dict(request.form))
     form = dict(request.form)
     session = db_session.create_session()
