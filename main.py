@@ -138,10 +138,9 @@ def not_found(error):
     return render_template('404.html')
 
 
-def main(*args):
+def main():
     db_session.global_init("db/data.sqlite")
-    print(args)
-    app.run(args[0], args[1])
+    app.run()
 
 
 if __name__ == '__main__':
