@@ -140,7 +140,7 @@ def not_found(error):
 
 def main():
     db_session.global_init("db/data.sqlite")
-    app.run()
+    app.run(port=33507)
 # web: gunicorn main:app
 
 if __name__ == '__main__':
