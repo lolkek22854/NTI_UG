@@ -1,0 +1,60 @@
+@font-face {
+    font-family: 'Montserrat';
+    src: local('Montserrat Regular'), local('Montserrat-Regular'), url('http://hb.bizmrg.com/fonts/montserrat/400.woff2') format('woff2'), url('http://hb.bizmrg.com/fonts/montserrat/400.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+.container_main {
+    color: #55b4c7;
+    border-color: #55b4c7;
+    background: #98ff98;
+    color: #ffffff;
+    filter: saturate(100%);
+    min-width: 100%;
+    margin-bottom: 0px;
+    height: 150px;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 500%;
+}
+
+.container {
+    background-color: aliceblue;
+    margin-top: 30px;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-bottom: 40px;
+    height: 700px;
+    justify-content: space-between;
+}
+
+#points{
+    align-self: center;
+    font-size: 100px;
+    margin-left: 100px;
+    align-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.inlinediv{
+    display: inline-block;
+}
+
+#profile-points {
+    margin-top: 40px;
+}
+
+#image {
+    border: 4px double black;
+}
+
+#name {
+    align-self: center;
+    text-align: center;
+    align-items: center;
+    font-size: 40px;
+}
