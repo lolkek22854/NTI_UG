@@ -146,4 +146,4 @@ def main():
 if __name__ == '__main__':
     # main()
     db_session.global_init("db/data.sqlite")
-    app.run()
+    app.run(host='0.0.0.0', port=33507)
