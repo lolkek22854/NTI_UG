@@ -18,7 +18,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@app.before_first_request()
+@app.before_first_request
 def create_db():
     db_session.global_init('db/data.sqlite')
 
