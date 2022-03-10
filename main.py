@@ -5,22 +5,58 @@ from flask_login.utils import *
 from data.forms import *
 from data.user import User
 from data.history import Action
+from data.bin import Tank
 from flask import request
 import datetime
+import json
+from flask_admin import Admin, expose, AdminIndexView
+from flask_admin.contrib.sqla import ModelView
 from utils.hash import *
-import random
-
+from utils.adminView import *
 import os
+
+
+class MyHomeView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        print(current_user.role)
+        if current_user.role == 1488 and current_user.is_authenticated:
+            session = db_session.create_session()
+            tanks = session.query(Tank).all()
+            t = []
+            for e in tanks:
+                t.append((e.type, e.resources, e.status))
+            return self.render('admin/index.html', tank1=t[1], tank2=t[2], tank3=t[3])
+        else:
+            return redirect('/')
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+db_session.global_init('db/data.sqlite')
+admin = Admin(app, name='popich', template_mode='bootstrap3', index_view=MyHomeView())
+admin.add_view(UserView(User, db_session.create_session()))
+admin.add_view(ActionView(Action, db_session.create_session()))
 
 
 @app.before_first_request
 def create_db():
     db_session.global_init('db/data.sqlite')
+    session = db_session.create_session()
+    if not session.query(User).filter(User.role==1488).first():
+        print('no mama')
+        user = User(login='admin', card_id=0, points=0, role=1488)
+        user.set_password('admin')
+        session.add(user)
+        session.commit()
+    for i in range(3):
+        if not session.query(Tank).filter(Tank.type == i):
+            tank = Tank(type=i, resources=0, status=100)
+            session.add(tank)
+            session.commit()
+    session.commit()
 
 
 @login_manager.user_loader
@@ -35,6 +71,8 @@ def index():
     # db_session.global_init("db/data.sqlite")
     if not current_user.is_authenticated:
         return redirect('/non_authorization')
+    if current_user.role == 1488:
+        return redirect('/admin')
     session = db_session.create_session()
     u = session.query(Action).filter(Action.user_id == current_user.id)
     act = []
@@ -113,17 +151,19 @@ def logout():
 
 @app.route('/send_data', methods=['GET', 'POST'])
 def send_data():
-    print(request)
-    print(dict(request.form))
-    form = dict(request.form)
+    form = json.loads(request.get_data())
+    print(form)
     session = db_session.create_session()
-    user = session.query(User).filter(User.card_id == form['id']).first()
+    user = session.query(User).filter(User.card_id == form['cardID']).first()
     if user:
-        user.points += int(form['points'])
-        act = Action(user_id=user.id, action='зачислены баллы: ' + str(form['points']),
+        user.points += int(form['value'])
+        act = Action(user_id=user.id, action='зачислены баллы: ' + str(form['value']),
                      time=str(datetime.datetime.now())[:-7])
+        act1 = Action(user_id=user.id, action=str(form['RequestType']),
+                      time=str(datetime.datetime.now())[:-7])
         session.merge(user)
         session.add(act)
+        session.add(act1)
         session.commit()
         return {'response': 'ok'}
     return {'response': 'id invalid'}
@@ -131,7 +171,7 @@ def send_data():
 
 @app.route('/check_id', methods=['GET', 'POST'])
 def check_id():
-    print(dict(request.form))
+    print(request.data)
     form = dict(request.form)
     session = db_session.create_session()
     user = session.query(User).filter(User.card_id == form['id']).first()
@@ -140,9 +180,9 @@ def check_id():
     return {'response': 'ok', 'user': -1}
 
 
-@app.errorhandler(404)
-def not_found(error):
-    return render_template('404.html')
+# @app.errorhandler(404)
+# def not_found(error):
+#     return render_template('404.html')
 
 
 def main():

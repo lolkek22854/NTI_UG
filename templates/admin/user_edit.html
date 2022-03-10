@@ -1,0 +1,47 @@
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+            <h3>Edit Record {{ user }}</h3>
+        </div>
+        <div class="modal-body">
+            <form action="/admin/user/edit/?id=1&amp;url=%2Fadmin%2Fuser%2F" method="POST" role="form"
+                  class="admin-form form-horizontal" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="points" class="col-md-2 control-label">Points
+                        &nbsp;
+                    </label>
+                    <div class="col-md-10">
+
+                        <input class="form-control" id="points" name="points" type="text" value="1248">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="card_id" class="col-md-2 control-label">Card Id
+                        &nbsp;
+                    </label>
+                    <div class="col-md-10">
+
+                        <input class="form-control" id="card_id" name="card_id" type="text" value="123">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="role" class="col-md-2 control-label">Role
+                        &nbsp;
+                    </label>
+                    <div class="col-md-10">
+                        <input class="form-control" id="role" name="role" type="text" value="1">
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10 submit-row">
+                        <input type="submit" class="btn btn-primary" value="Save">
+                        <a href="/admin/user/" class="btn btn-danger" role="button" data-dismiss="modal">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script src="/admin/static/admin/js/bs3_modal.js?v=1.0.0"></script>
+    </div>

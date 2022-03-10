@@ -15,6 +15,7 @@
     <div class="container_main">
         <div>
             негры
+            {% if current_user.is_authenticated %}<a href="/logout">ливнуть</a>{% endif %}
         </div>
     </div>
 </header>

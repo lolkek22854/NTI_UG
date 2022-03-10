@@ -2,7 +2,6 @@ import sqlalchemy
 from .db_session import SqlAlchemyBase
 
 
-
 class Action(SqlAlchemyBase):
     __tablename__ = 'actions'
 
