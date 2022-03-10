@@ -26,7 +26,7 @@ class MyHomeView(AdminIndexView):
             t = []
             for e in tanks:
                 t.append((e.type, e.resources, e.status))
-            return self.render('admin/index.html', tank1=t[1], tank2=t[2], tank3=t[3])
+            return self.render('admin/index.html', tank1=t[0], tank2=t[1], tank3=t[2])
         else:
             return redirect('/')
 
