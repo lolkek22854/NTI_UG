@@ -10,6 +10,7 @@ from flask import request
 import datetime
 import json
 from flask_admin import Admin, expose, AdminIndexView
+from flask_cors import CORS, cross_origin
 from flask_admin.contrib.sqla import ModelView
 from utils.hash import *
 from utils.adminView import *
@@ -33,6 +34,8 @@ class MyHomeView(AdminIndexView):
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 login_manager = LoginManager()
 login_manager.init_app(app)
 db_session.global_init('db/data.sqlite')
@@ -151,6 +154,7 @@ def logout():
 
 
 @app.route('/send_data', methods=['GET', 'POST'])
+@cross_origin()
 def send_data():
     form = json.loads(request.get_data())
     print(form)
