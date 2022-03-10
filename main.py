@@ -46,7 +46,7 @@ admin.add_view(ActionView(Action, db_session.create_session()))
 
 @app.before_first_request
 def create_db():
-    # db_session.global_init('db/data.sqlite')
+    db_session.global_init('db/data.sqlite')
     session = db_session.create_session()
     if not session.query(User).filter(User.role==1488).first():
         print('no mama')
