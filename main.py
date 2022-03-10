@@ -52,6 +52,7 @@ def create_db():
         session.add(user)
         session.commit()
     for i in range(3):
+        print(session.query(Tank).filter(Tank.type == i).first())
         if not session.query(Tank).filter(Tank.type == i).first():
             tank = Tank(type=i, resources=0, status=100)
             session.add(tank)
@@ -78,7 +79,7 @@ def index():
         act.append((e.action, e.time))
     session.commit()
     act = sorted(act, key=lambda x: x[1], reverse=True)
-    if u.role == 1488:
+    if current_user.role == 1488:
         return redirect('/admin')
     labels = ('событие', 'время')
     return render_template('index.html', username=current_user.login, points=current_user.points,
