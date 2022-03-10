@@ -10,6 +10,7 @@ from flask import request
 import datetime
 import json
 from flask_admin import Admin, expose, AdminIndexView
+from flask_cors import CORS, cross_origin
 from flask_admin.contrib.sqla import ModelView
 from utils.hash import *
 from utils.adminView import *
@@ -33,6 +34,8 @@ class MyHomeView(AdminIndexView):
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 login_manager = LoginManager()
 login_manager.init_app(app)
 db_session.global_init('db/data.sqlite')
@@ -52,7 +55,8 @@ def create_db():
         session.add(user)
         session.commit()
     for i in range(3):
-        if not session.query(Tank).filter(Tank.type == i):
+        print(session.query(Tank).filter(Tank.type == i).first())
+        if not session.query(Tank).filter(Tank.type == i).first():
             tank = Tank(type=i, resources=0, status=100)
             session.add(tank)
             session.commit()
@@ -71,8 +75,6 @@ def index():
     # db_session.global_init("db/data.sqlite")
     if not current_user.is_authenticated:
         return redirect('/non_authorization')
-    if current_user.role == 1488:
-        return redirect('/admin')
     session = db_session.create_session()
     u = session.query(Action).filter(Action.user_id == current_user.id)
     act = []
@@ -80,6 +82,8 @@ def index():
         act.append((e.action, e.time))
     session.commit()
     act = sorted(act, key=lambda x: x[1], reverse=True)
+    if current_user.role == 1488:
+        return redirect('/admin')
     labels = ('событие', 'время')
     return render_template('index.html', username=current_user.login, points=current_user.points,
                            src='../static/images/frog.jpg', content=act, labels=labels)
@@ -150,6 +154,7 @@ def logout():
 
 
 @app.route('/send_data', methods=['GET', 'POST'])
+@cross_origin()
 def send_data():
     form = json.loads(request.get_data())
     print(form)
@@ -188,6 +193,7 @@ def check_id():
 def main():
     db_session.global_init("db/data.sqlite")
     app.run()
+
 
 
 if __name__ == '__main__':
