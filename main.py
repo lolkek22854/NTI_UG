@@ -52,7 +52,7 @@ def create_db():
         session.add(user)
         session.commit()
     for i in range(3):
-        if not session.query(Tank).filter(Tank.type == i):
+        if not session.query(Tank).filter(Tank.type == i).first():
             tank = Tank(type=i, resources=0, status=100)
             session.add(tank)
             session.commit()
@@ -71,8 +71,6 @@ def index():
     # db_session.global_init("db/data.sqlite")
     if not current_user.is_authenticated:
         return redirect('/non_authorization')
-    if current_user.role == 1488:
-        return redirect('/admin')
     session = db_session.create_session()
     u = session.query(Action).filter(Action.user_id == current_user.id)
     act = []
@@ -80,6 +78,8 @@ def index():
         act.append((e.action, e.time))
     session.commit()
     act = sorted(act, key=lambda x: x[1], reverse=True)
+    if u.role == 1488:
+        return redirect('/admin')
     labels = ('событие', 'время')
     return render_template('index.html', username=current_user.login, points=current_user.points,
                            src='../static/images/frog.jpg', content=act, labels=labels)
