@@ -7,6 +7,8 @@ from wtforms.validators import DataRequired
 class RegisterForm(FlaskForm):
     login = StringField('Login', validators=[DataRequired()],
                         render_kw={"placeholder": "Login"})
+    address = StringField('Address', validators=[DataRequired()],
+                        render_kw={"placeholder": "Your address"})
     password = PasswordField('Password', validators=[DataRequired()],
                              render_kw={"placeholder": "Password"})
     password_again = PasswordField('Repeat Password',

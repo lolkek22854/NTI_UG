@@ -33,6 +33,17 @@
         </div>
         <div class="input-group mb-5">
             <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
+            </div>
+            {{ form.address(class="form-control", type="text", min="1") }}<br>
+            {% for error in form.address.errors %}
+            <div class="invalid-tooltip">
+                {{ error }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="input-group mb-5">
+            <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fa fa-lock"></i></span>
             </div>
             {{ form.password(class="form-control", type="password") }}<br>

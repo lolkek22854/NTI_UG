@@ -13,7 +13,7 @@ class User(SqlAlchemyBase, UserMixin):
     points = sqlalchemy.Column(sqlalchemy.Integer)
     card_id = sqlalchemy.Column(sqlalchemy.Integer)
     role = sqlalchemy.Column(sqlalchemy.Integer)
-
+    address = sqlalchemy.Column(sqlalchemy.String)
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

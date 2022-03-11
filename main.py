@@ -18,6 +18,10 @@ from utils.adminView import *
 import os
 
 
+def gettime():
+    return str(datetime.datetime.now())[:-7]
+
+
 class MyHomeView(AdminIndexView):
     @expose('/')
     def index(self):
@@ -26,16 +30,25 @@ class MyHomeView(AdminIndexView):
                 session = db_session.create_session()
                 tanks = session.query(Tank).all()
                 t = []
+                msg = ''
                 for e in tanks:
                     t.append((e.type, e.resources, e.status))
                 st = session.query(Status).all()
-                if st[0].status == 1: servo='OK'
-                else: servo='NOT WORKING'
-                if st[1].status == 1: sc='OK'
-                else: sc='NOT WORKING'
-                if st[2].status == 1: sd='OK'
-                else: sd='NOT WORKING'
-                return self.render('admin/index.html', plastic=t[0][1], glass=t[1][1], paper=t[2][1], servo=servo, sensorsc=sc, sensorsd=sd)
+                if st[0].status == 1:
+                    servo = 'OK'
+                else:
+                    servo = 'NOT WORKING'
+                if st[1].status == 1:
+                    sc = 'OK'
+                else:
+                    sc = 'NOT WORKING'
+                if st[2].status == 1:
+                    sd = 'OK'
+                else:
+                    sd = 'NOT WORKING'
+                if any(i == 'NOT WORKING' for i in [servo, sc, sd]): msg = 'Ведутся ремонтные работы'
+                return self.render('admin/index.html', plastic=t[0][1], glass=t[1][1], paper=t[2][1], servo=servo,
+                                   sensorsc=sc, sensorsd=sd, msg=msg)
             else:
                 return redirect('/')
         else:
@@ -58,10 +71,10 @@ admin.add_view(ActionView(Action, db_session.create_session()))
 def create_db():
     db_session.global_init('db/data.sqlite')
     session = db_session.create_session()
-    if not session.query(User).filter(User.role==1488).first():
+    if not session.query(User).filter(User.role == 1488).first():
         print('no mama')
         user = User(login='admin', card_id=0, points=0, role=1488)
-        user.set_password('admin')
+        user.set_password('123123123')
         session.add(user)
         session.commit()
     for i in range(3):
@@ -128,6 +141,7 @@ def register():
             card_id=form.card_id.data,
             points=0,
             role=1,
+            address=form.address.data
         )
         user.set_password(form.password.data)
         session.add(user)
@@ -175,17 +189,18 @@ def send_data():
     print(request)
     print(request.form)
     print(request.data)
-    form = json.loads(request.data.decode('utf8').replace("'", '"'))
-    # print(form)
+    form = json.loads(request.data.decode('utf8').replace("'", '"').replace('\x00', ''))
+    print(form)
     if form['RequestType'] == 'add_points':
         session = db_session.create_session()
         user = session.query(User).filter(User.card_id == form['cardID']).first()
         if user:
             user.points += int(form['value'])
             act = Action(user_id=user.id, action='зачислены баллы: ' + str(form['value']),
-                         time=str(datetime.datetime.now())[:-7], user=user.login)
-            act1 = Action(user_id=user.id, action='Утилизация мусора в бак: '+['стекло', 'бумага', 'пластик'][int(form['tank'])],
-                          time=str(datetime.datetime.now())[:-7], user=user.login)
+                         time=gettime(), user=user.login)
+            act1 = Action(user_id=user.id,
+                          action='Утилизация мусора в бак: ' + ['стекло', 'бумага', 'пластик'][int(form['tank'])],
+                          time=gettime(), user=user.login)
             session.merge(user)
             tank = session.query(Tank).filter(Tank.type == form['tank']).first()
             tank.resources += 10
@@ -214,6 +229,20 @@ def check_id():
         session.merge(st)
     session.commit()
     return {'response': 'ok'}
+
+
+@app.route('/zero_points')
+def zero_points():
+    if not current_user.is_authenticated:
+        return redirect('/non_authorization')
+    session = db_session.create_session()
+    u = session.query(User).filter(User.id == current_user.id).first()
+    act = Action(user_id=current_user.id, time=gettime(), user=current_user.login, action='списаны баллы({}) с пользователя {}'.format(u.points, u.login))
+    u.points = 0
+    session.add(act)
+    session.merge(u)
+    session.commit()
+    return redirect('/')
 
 
 # @app.errorhandler(404)

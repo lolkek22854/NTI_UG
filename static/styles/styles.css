@@ -27,7 +27,7 @@
     margin-left: 200px;
     margin-right: 200px;
     margin-bottom: 40px;
-    height: 700px;
+    height: 780px;
     /* justify-content: space-around; */
 }
 
@@ -118,4 +118,20 @@
 		 2px -2px 0   #000000,
 		-2px  2px 0   #000000,
 		 2px  2px 0   #000000;
+}
+
+.btn {
+    display: inline-block; /* Строчно-блочный элемент */
+    background: #8C959D; /* Серый цвет фона */
+    color: #fff; /* Белый цвет текста */
+    padding: 1rem 1.5rem; /* Поля вокруг текста */
+    text-decoration: none; /* Убираем подчёркивание */
+    border-radius: 3px; /* Скругляем уголки */
+   }
+
+.popa{
+    margin-right: 300px;
+}
+.row{
+    margin-top: 30px;
 }

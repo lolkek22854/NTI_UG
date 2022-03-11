@@ -13,39 +13,48 @@
             </div>
             <div id="points" class="inlinediv">POINTS: {{points}}</div>
         </span>
-<!--  -->
-        <div class="row">
-            <div class="col-md-6 col-sm-12 col-xs-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3>История</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        {% for i in labels %}
-                                        <td>{{ i }}</td>
-                                        {% endfor %}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for i in content %}
-                                    <tr>
-                                        {% for j in i %}
-                                        <td>{{ j }}</td>
-                                        {% endfor %}
-                                    </tr>
+        <br>
+
+    </span>
+    <!--  -->
+    <div class="inlinediv popa">
+            <a href="/zero_points" class="btn"><h3>Списать баллы</h3></a>
+    </div>
+<div>
+    <div class="row inlinediv">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>История</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    {% for i in labels %}
+                                    <td>{{ i }}</td>
                                     {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in content %}
+                                <tr>
+                                    {% for j in i %}
+                                    <td>{{ j }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-<!--  -->
+    </div>
+</div>
+
+    <!--  -->
 </div>
 
 {% endblock %}
