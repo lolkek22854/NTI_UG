@@ -28,10 +28,10 @@
     margin-right: 200px;
     margin-bottom: 40px;
     height: 700px;
-    justify-content: space-between;
+    /* justify-content: space-around; */
 }
 
-#points{
+#points {
     align-self: center;
     font-size: 100px;
     margin-left: 100px;
@@ -40,7 +40,7 @@
     margin-bottom: 40px;
 }
 
-.inlinediv{
+.inlinediv {
     display: inline-block;
 }
 
@@ -58,7 +58,64 @@
     align-items: center;
     font-size: 40px;
 }
-.panel-body{
+
+.panel-body {
     overflow: auto;
     height: 350px;
+}
+
+#quit {
+    border: #0c7070;
+    border-width: 3px;
+}
+
+#container_init {
+
+    align-items: center;
+    text-align: center;
+    align-content: center;
+}
+
+.textpage_buttons-row {
+    border: #0c7070;
+    border-radius: 10px;
+}
+
+.countainer_tanks {
+    height: 300px;
+    margin-top: 120px;
+    align-content: center;
+    align-items: center;
+}
+
+.ts {
+	font-family: Arial;
+	font-size: 50px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-shadow:
+		-0   -2px 0   #000000,
+		 0   -2px 0   #000000,
+		-0    2px 0   #000000,
+		 0    2px 0   #000000,
+		-2px -0   0   #000000,
+		 2px -0   0   #000000,
+		-2px  0   0   #000000,
+		 2px  0   0   #000000,
+		-1px -2px 0   #000000,
+		 1px -2px 0   #000000,
+		-1px  2px 0   #000000,
+		 1px  2px 0   #000000,
+		-2px -1px 0   #000000,
+		 2px -1px 0   #000000,
+		-2px  1px 0   #000000,
+		 2px  1px 0   #000000,
+		-2px -2px 0   #000000,
+		 2px -2px 0   #000000,
+		-2px  2px 0   #000000,
+		 2px  2px 0   #000000,
+		-2px -2px 0   #000000,
+		 2px -2px 0   #000000,
+		-2px  2px 0   #000000,
+		 2px  2px 0   #000000;
 }

@@ -9,3 +9,4 @@ class Action(SqlAlchemyBase):
     user_id = sqlalchemy.Column(sqlalchemy.Integer)
     action = sqlalchemy.Column(sqlalchemy.String)
     time = sqlalchemy.Column(sqlalchemy.String)
+    user = sqlalchemy.Column(sqlalchemy.String)

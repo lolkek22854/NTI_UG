@@ -1,9 +1,49 @@
 {% extends 'admin/master.html' %}
 {% block body %}
-<a href="/logout">ЛИВНУТЬ</a>
-  {{tank1}}
-<br>
-{{tank2}}
-<br>
-{{tank3}}
+<link rel="stylesheet" href="../static/styles/styles.css">
+<style type="text/css">
+    .inline {
+        height: 300px;
+        width: 300px;
+        background-color: black;
+        display: inline-block;
+    }
+
+    #glass {
+        background-color: greenyellow;
+    }
+
+    #paper {
+        background-color: rgb(0, 162, 255);
+    }
+
+    #plastic {
+        background-color: rgb(179, 67, 67);
+    }
+
+    .tank {
+        margin-left: 10px;
+        width: 260px;
+        height: 280px;
+        text-align: center;
+    }
+</style>
+<a href="/logout">logout</a>
+<div id="countainer_tanks">
+  <br>
+  <br>
+  <br>
+  <div style="text-align: center;">
+    сервоприводы: {{servo}}          датчики цвета: {{sensorsc}}         датчики переполнения: {{sensorsd}}
+  </div>
+  <br>
+  <br>
+  <div>
+    <div class="inline"><div id="plastic" class="tank"><h3>Заполнен на:</h3><br><h2>{{plastic}}ед</h2></div></div>
+    <div class="inline"><div id="glass" class="tank"><h3>Заполнен на:</h3><br><h2>{{glass}}ед</h2></div></div>
+    <div class="inline"><div id="paper" class="tank"><h3>Заполнен на:</h3><br><h2>{{paper}}ед</h2></div></div>
+  </div>
+</div>
+<div>
+</div>
 {% endblock %}

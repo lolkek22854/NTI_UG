@@ -9,3 +9,6 @@ class Tank(SqlAlchemyBase):
     status = sqlalchemy.Column(sqlalchemy.Integer)
     resources = sqlalchemy.Column(sqlalchemy.Integer)
     type = sqlalchemy.Column(sqlalchemy.Integer)
+    is_servo = sqlalchemy.Column(sqlalchemy.Integer)
+    is_rgb = sqlalchemy.Column(sqlalchemy.Integer)
+    is_near = sqlalchemy.Column(sqlalchemy.Integer)

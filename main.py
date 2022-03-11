@@ -6,6 +6,7 @@ from data.forms import *
 from data.user import User
 from data.history import Action
 from data.bin import Tank
+from data.st import Status
 from flask import request
 import datetime
 import json
@@ -20,14 +21,23 @@ import os
 class MyHomeView(AdminIndexView):
     @expose('/')
     def index(self):
-        print(current_user.role)
-        if current_user.role == 1488 and current_user.is_authenticated:
-            session = db_session.create_session()
-            tanks = session.query(Tank).all()
-            t = []
-            for e in tanks:
-                t.append((e.type, e.resources, e.status))
-            return self.render('admin/index.html', tank1=t[0], tank2=t[1], tank3=t[2])
+        if current_user.is_authenticated:
+            if current_user.role == 1488:
+                session = db_session.create_session()
+                tanks = session.query(Tank).all()
+                t = []
+                for e in tanks:
+                    t.append((e.type, e.resources, e.status))
+                st = session.query(Status).all()
+                if st[0].status == 1: servo='OK'
+                else: servo='NOT WORKING'
+                if st[1].status == 1: sc='OK'
+                else: sc='NOT WORKING'
+                if st[2].status == 1: sd='OK'
+                else: sd='NOT WORKING'
+                return self.render('admin/index.html', plastic=t[0][1], glass=t[1][1], paper=t[2][1], servo=servo, sensorsc=sc, sensorsd=sd)
+            else:
+                return redirect('/')
         else:
             return redirect('/')
 
@@ -60,6 +70,12 @@ def create_db():
             tank = Tank(type=i, resources=0, status=100)
             session.add(tank)
             session.commit()
+    for i in range(3):
+        print(session.query(Status).filter(Status.type == i).first())
+        if not session.query(Status).filter(Status.type == i).first():
+            st = Status(type=i, status=1)
+            session.add(st)
+            session.commit()
     session.commit()
 
 
@@ -75,6 +91,8 @@ def index():
     # db_session.global_init("db/data.sqlite")
     if not current_user.is_authenticated:
         return redirect('/non_authorization')
+    elif current_user.role == 1488:
+        return redirect('/admin')
     session = db_session.create_session()
     u = session.query(Action).filter(Action.user_id == current_user.id)
     act = []
@@ -82,8 +100,6 @@ def index():
         act.append((e.action, e.time))
     session.commit()
     act = sorted(act, key=lambda x: x[1], reverse=True)
-    if current_user.role == 1488:
-        return redirect('/admin')
     labels = ('событие', 'время')
     return render_template('index.html', username=current_user.login, points=current_user.points,
                            src='../static/images/frog.jpg', content=act, labels=labels)
@@ -156,33 +172,48 @@ def logout():
 @app.route('/send_data', methods=['GET', 'POST'])
 @cross_origin()
 def send_data():
-    form = json.loads(request.get_data())
+    print(request)
+    print(request.form)
+    print(request.data)
+    form = json.loads(request.data.decode('utf8').replace("'", '"'))
+    # print(form)
+    if form['RequestType'] == 'add_points':
+        session = db_session.create_session()
+        user = session.query(User).filter(User.card_id == form['cardID']).first()
+        if user:
+            user.points += int(form['value'])
+            act = Action(user_id=user.id, action='зачислены баллы: ' + str(form['value']),
+                         time=str(datetime.datetime.now())[:-7], user=user.login)
+            act1 = Action(user_id=user.id, action='Утилизация мусора в бак: '+['стекло', 'бумага', 'пластик'][int(form['tank'])],
+                          time=str(datetime.datetime.now())[:-7], user=user.login)
+            session.merge(user)
+            tank = session.query(Tank).filter(Tank.type == form['tank']).first()
+            tank.resources += 10
+            session.merge(tank)
+            session.add(act)
+            session.add(act1)
+            session.commit()
+            return {'response': 'ok'}
+        return {'response': 'id invalid'}
+    else:
+        session = db_session.create_session()
+        user = session.query(User).filter(User.card_id == form['cardID']).first()
+        if user:
+            return {'response': 'ok', 'user': str(user.role)}
+    return {'response': 'ok', 'user': -1}
+
+
+@app.route('/app', methods=['GET', 'POST'])
+def check_id():
+    form = dict(request.json)
     print(form)
     session = db_session.create_session()
-    user = session.query(User).filter(User.card_id == form['cardID']).first()
-    if user:
-        user.points += int(form['value'])
-        act = Action(user_id=user.id, action='зачислены баллы: ' + str(form['value']),
-                     time=str(datetime.datetime.now())[:-7])
-        act1 = Action(user_id=user.id, action=str(form['RequestType']),
-                      time=str(datetime.datetime.now())[:-7])
-        session.merge(user)
-        session.add(act)
-        session.add(act1)
-        session.commit()
-        return {'response': 'ok'}
-    return {'response': 'id invalid'}
-
-
-@app.route('/check_id', methods=['GET', 'POST'])
-def check_id():
-    print(request.data)
-    form = dict(request.form)
-    session = db_session.create_session()
-    user = session.query(User).filter(User.card_id == form['id']).first()
-    if user:
-        return {'response': 'ok', 'user': str(user.role)}
-    return {'response': 'ok', 'user': -1}
+    for i in range(3):
+        st = session.query(Status).filter(Status.type == i).first()
+        st.status = int(form.get(['is_servo', 'is_rgb', 'is_near'][i]))
+        session.merge(st)
+    session.commit()
+    return {'response': 'ok'}
 
 
 # @app.errorhandler(404)
@@ -193,7 +224,6 @@ def check_id():
 def main():
     db_session.global_init("db/data.sqlite")
     app.run()
-
 
 
 if __name__ == '__main__':
